@@ -2,9 +2,9 @@ import { z } from "zod";
 
 const BaseUserSchema = z.object({
   email: z.string().email(),
-  phoneNumber: z.string(),
+  phoneNumber: z.string().optional(),
   password: z.string().min(6),
-  address: z.string(),
+  address: z.string().optional(),
   role: z.enum(["user", "admin"]).default("user"), // enum role
 });
 
@@ -21,7 +21,7 @@ export const DonorUserSchema = BaseUserSchema.extend({
     "O+",
     "O-",
   ]),
-  dateOfBirth: z.string(),
+  dateOfBirth: z.string().optional(),
 });
 
 export type DonorUserType = z.infer<typeof DonorUserSchema>;

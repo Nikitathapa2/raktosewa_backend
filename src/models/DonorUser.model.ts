@@ -6,14 +6,14 @@ const donorUserSchema: Schema = new Schema(
     fullName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    phoneNumber: { type: String, required: true },
-    dateOfBirth: { type: String, required: true },
+    phoneNumber: { type: String, required: false },
+    dateOfBirth: { type: String, required: false },
     bloodGroup: {
       type: String,
       enum: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
       required: true,
     },
-    address: { type: String, required: true },
+    address: { type: String, required: false },
     role: { type: String, enum: ["user", "admin"], default: "user" },
 
     // optional

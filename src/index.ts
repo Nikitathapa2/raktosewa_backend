@@ -11,8 +11,8 @@ app.use(express.json());
 
 connectDatabase();
 
-app.use("/donors", donorRoutes);
-app.use("/organizations", organizationRoutes);
+app.use("/api/v1/donorusers", donorRoutes);
+app.use("/api/v1/organizations", organizationRoutes);
 
 app.get("/", (_req, res) => {
   res.send("Raktosewa API is running ");
