@@ -14,7 +14,8 @@ const donorUserSchema: Schema = new Schema(
       required: true,
     },
     address: { type: String, required: false },
-    role: { type: String, enum: ["user", "admin"], default: "user" },
+    userType: { type: String, enum: ["donor"], default: "donor" },
+
 
     // optional
     isEmailVerified: { type: Boolean, default: false },

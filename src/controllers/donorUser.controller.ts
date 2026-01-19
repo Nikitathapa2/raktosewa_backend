@@ -40,12 +40,12 @@ export class DonorUserController {
         throw new HttpError(400, "Invalid credentials");
       }
 
-      const { token, donor } = await donorUserService.loginDonor(parsedData.data);
+      const { token, sendDonor } = await donorUserService.loginDonor(parsedData.data);
       return res.status(200).json({
         success: true,
         message: "Login successful",
         token,
-        data: donor,
+        data: sendDonor,
       });
     } catch (error: any) {
       return res.status(error.statusCode || 500).json({

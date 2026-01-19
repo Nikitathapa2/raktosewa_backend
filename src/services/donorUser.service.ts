@@ -2,7 +2,6 @@ import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { CreateDonorDTO, LoginUserDTO } from "../dtos/user.dto";
 import { DonorUserRepository } from "../repositories/donorUser.repository";
-import { IDonorUser } from "../models/DonorUser.model";
 import { HttpError } from "../errors/http-error";
 import { JWT_SECRET } from "../config";
 
@@ -21,10 +20,11 @@ export class DonorUserService {
     const hashedPassword = await bcryptjs.hash(donorData.password, 10);
     donorData.password = hashedPassword;
 
-    // Remove confirmPassword before saving
+    // Remove confirmPassword and add userType before saving
     const { confirmPassword, ...dataToSave } = donorData;
+    const donorWithUserType = { ...dataToSave, userType: "donor" as const };
 
-    const newDonor = await donorUserRepository.createDonor(dataToSave);
+    const newDonor = await donorUserRepository.createDonor(donorWithUserType);
     return newDonor;
   }
 
@@ -35,16 +35,27 @@ export class DonorUserService {
 
     const validPassword = await bcryptjs.compare(loginData.password, donor.password || "");
     if (!validPassword) throw new HttpError(401, "Invalid credentials");
+    
+    const sendDonor = {
+      id: donor._id,
+      email: donor.email,
+      fullName: donor.fullName,
+      userType: donor.userType,
+      phoneNumber: donor.phoneNumber,
+      dateOfBirth: donor.dateOfBirth,
+      bloodGroup: donor.bloodGroup,
+      address: donor.address,
 
+    }
     const payload = {
       id: donor._id,
       email: donor.email,
       fullName: donor.fullName,
-      role: donor.role,
+      userType: donor.userType,
     };
 
     const token = jwt.sign(payload, JWT_SECRET as string, { expiresIn: "1h" });
-    return { token, donor };
+    return { token, sendDonor };
   }
 
   // Get all donors

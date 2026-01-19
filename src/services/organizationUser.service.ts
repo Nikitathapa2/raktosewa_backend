@@ -21,10 +21,11 @@ export class OrganizationUserService {
     const hashedPassword = await bcryptjs.hash(orgData.password, 10);
     orgData.password = hashedPassword;
 
-    // Remove confirmPassword before saving
+    // Remove confirmPassword and add userType before saving
     const { confirmPassword, ...dataToSave } = orgData;
+    const orgWithUserType = { ...dataToSave, userType: "organization" as const };
 
-    const newOrg = await organizationUserRepository.createOrganization(dataToSave);
+    const newOrg = await organizationUserRepository.createOrganization(orgWithUserType);
     return newOrg;
   }
 
@@ -36,15 +37,23 @@ export class OrganizationUserService {
     const validPassword = await bcryptjs.compare(loginData.password, org.password || "");
     if (!validPassword) throw new HttpError(401, "Invalid credentials");
 
+    const sendOrg ={
+      id: org._id,
+      email:  org.email,
+      organizationName: org.organizationName,
+      userType: org.userType,
+      phoneNumber: org.phoneNumber,
+      address: org.address,
+    }
     const payload = {
       id: org._id,
       email: org.email,
       organizationName: org.organizationName,
-      role: org.role,
+      userType: org.userType,
     };
 
     const token = jwt.sign(payload, JWT_SECRET as string, { expiresIn: "1h" });
-    return { token, organization: org };
+    return { token, organization: sendOrg };
   }
 
   // Get all organizations

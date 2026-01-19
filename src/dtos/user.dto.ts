@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { DonorUserSchema, OrganizationUserSchema } from "../types/user.type";
 
-
-export const CreateDonorDTO = DonorUserSchema.extend({
+// DTO without userType - will be automatically set by the server
+export const CreateDonorDTO = DonorUserSchema.omit({ userType: true }).extend({
   confirmPassword: z.string().min(6, "Confirm password is required"),
   terms: z.boolean().refine((val) => val === true, {
     message: "You must accept the terms and conditions",
@@ -15,7 +15,8 @@ export const CreateDonorDTO = DonorUserSchema.extend({
 export type CreateDonorDTO = z.infer<typeof CreateDonorDTO>;
 
 
-export const CreateOrganizationDTO = OrganizationUserSchema.extend({
+// DTO without userType - will be automatically set by the server
+export const CreateOrganizationDTO = OrganizationUserSchema.omit({ userType: true }).extend({
   confirmPassword: z.string().min(6, "Confirm password is required"),
   terms: z.boolean().refine((val) => val === true, {
     message: "You must accept the terms and conditions",
