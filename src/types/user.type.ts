@@ -5,7 +5,8 @@ const BaseUserSchema = z.object({
   phoneNumber: z.string().optional(),
   password: z.string().min(6),
   address: z.string().optional(),
-  role: z.enum(["user", "admin"]).default("user"), // enum role
+  role: z.enum(["user", "admin"]).default("user"), // AUTHORIZATION
+  userType: z.enum(["donor", "organization"]),    // BUSINESS TYPE
 });
 
 
