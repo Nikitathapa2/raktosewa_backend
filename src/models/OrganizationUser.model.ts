@@ -9,8 +9,7 @@ const organizationUserSchema: Schema = new Schema(
     password: { type: String, required: true },
     phoneNumber: { type: String, required: true },
     address: { type: String, required: true },
-    role: { type: String, enum: ["user", "admin"], default: "user" },
-
+    userType: { type: String, enum: ["organization"], default: "organization" },
     // optional
     isEmailVerified: { type: Boolean, default: false },
     googleId: { type: String, sparse: true, unique: true },
