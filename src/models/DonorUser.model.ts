@@ -15,6 +15,7 @@ const donorUserSchema: Schema = new Schema(
     },
     address: { type: String, required: false },
     userType: { type: String, enum: ["donor"], default: "donor" },
+    profilePicture: { type: String, default: "" },
 
 
     // optional

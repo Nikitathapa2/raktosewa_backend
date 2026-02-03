@@ -2,8 +2,10 @@ import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { CreateDonorDTO, LoginUserDTO } from "../dtos/user.dto";
 import { DonorUserRepository } from "../repositories/donorUser.repository";
+import { IDonorUser } from "../models/DonorUser.model";
 import { HttpError } from "../errors/http-error";
 import { JWT_SECRET } from "../config";
+import { profile } from "node:console";
 
 const donorUserRepository = new DonorUserRepository();
 
@@ -45,6 +47,7 @@ export class DonorUserService {
       dateOfBirth: donor.dateOfBirth,
       bloodGroup: donor.bloodGroup,
       address: donor.address,
+      profilePicture: donor.profilePicture,
 
     }
     const payload = {
@@ -71,11 +74,17 @@ export class DonorUserService {
   }
 
   // Update donor
-  async updateDonor(id: string, updates: Partial<CreateDonorDTO>) {
+  async updateDonor(id: string, updates: Partial<CreateDonorDTO> & { profilePicture?: string }) {
     if (updates.password) {
       updates.password = await bcryptjs.hash(updates.password, 10);
     }
     const updatedDonor = await donorUserRepository.updateDonor(id, updates);
+    if (!updatedDonor) throw new HttpError(404, "Donor not found");
+    return updatedDonor;
+  }
+
+  async updateDonorProfilePicture(id: string, filename: string) {
+    const updatedDonor = await donorUserRepository.updateDonor(id, { profilePicture: filename });
     if (!updatedDonor) throw new HttpError(404, "Donor not found");
     return updatedDonor;
   }

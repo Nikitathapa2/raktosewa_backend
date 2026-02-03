@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { OrganizationUserController } from "../controllers/organizationUser.controller";
+import { protect } from "../middlewares/auth.middleware";
+import { uploadImage } from "../middlewares/uploads";
 
 const router = Router();
 const orgController = new OrganizationUserController();
@@ -19,5 +21,13 @@ router.get("/:id", (req, res) => orgController.getOrganizationById(req, res));
 
 // Update organization by ID
 router.put("/:id", (req, res) => orgController.updateOrganization(req, res));
+
+router.post(
+	'/upload-photo',
+	protect,
+	uploadImage.single('profilePicture'),
+	(req, res) => orgController.uploadProfilePhoto(req, res)
+);
+
 
 export default router;
