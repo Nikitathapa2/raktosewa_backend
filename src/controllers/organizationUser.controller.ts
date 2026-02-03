@@ -103,4 +103,30 @@ export class OrganizationUserController {
       });
     }
   }
+
+  // Upload organization profile photo
+  async uploadProfilePhoto(req: Request, res: Response) {
+    try {
+      if (!req.user || !req.user._id) {
+        return res.status(401).json({ success: false, message: "Unauthorized" });
+      }
+
+      const file = (req as any).file as any;
+      if (!file) {
+        return res.status(400).json({ success: false, message: "No file uploaded" });
+      }
+
+      const updatedOrg = await organizationUserService.updateOrganizationProfilePicture(req.user._id.toString(), file.filename);
+      return res.status(200).json({ 
+        success: true, 
+        message: "Profile picture updated", 
+        data: {
+          profilePicture: updatedOrg.profilePicture,
+          organization: updatedOrg
+        }
+      });
+    } catch (error: any) {
+      return res.status(error.statusCode || 500).json({ success: false, message: error.message || "Internal server error" });
+    }
+  }
 }

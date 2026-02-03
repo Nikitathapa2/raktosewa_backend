@@ -44,6 +44,8 @@ export class OrganizationUserService {
       userType: org.userType,
       phoneNumber: org.phoneNumber,
       address: org.address,
+      profilePicture: org.profilePicture,
+      headOfOrganization: org.headOfOrganization,
     }
     const payload = {
       id: org._id,
@@ -69,11 +71,17 @@ export class OrganizationUserService {
   }
 
   // Update organization
-  async updateOrganization(id: string, updates: Partial<CreateOrganizationDTO>) {
+  async updateOrganization(id: string, updates: Partial<CreateOrganizationDTO> & { profilePicture?: string }) {
     if (updates.password) {
       updates.password = await bcryptjs.hash(updates.password, 10);
     }
     const updatedOrg = await organizationUserRepository.updateOrganization(id, updates);
+    if (!updatedOrg) throw new HttpError(404, "Organization not found");
+    return updatedOrg;
+  }
+
+  async updateOrganizationProfilePicture(id: string, filename: string) {
+    const updatedOrg = await organizationUserRepository.updateOrganization(id, { profilePicture: filename });
     if (!updatedOrg) throw new HttpError(404, "Organization not found");
     return updatedOrg;
   }

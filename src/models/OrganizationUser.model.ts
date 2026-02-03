@@ -10,6 +10,7 @@ const organizationUserSchema: Schema = new Schema(
     phoneNumber: { type: String, required: true },
     address: { type: String, required: true },
     userType: { type: String, enum: ["organization"], default: "organization" },
+    profilePicture: { type: String, default: "" },
     // optional
     isEmailVerified: { type: Boolean, default: false },
     googleId: { type: String, sparse: true, unique: true },

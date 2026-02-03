@@ -7,6 +7,7 @@ const BaseUserSchema = z.object({
   address: z.string().optional(),
   role: z.enum(["user", "admin"]).default("user"), // AUTHORIZATION
   userType: z.enum(["donor", "organization"]),    // BUSINESS TYPE
+  profilePicture: z.string().optional(),
 });
 
 
