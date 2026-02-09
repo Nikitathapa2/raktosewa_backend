@@ -1,10 +1,12 @@
 import { Router } from "express";
 import { DonorUserController } from "../controllers/donorUser.controller";
+import { PasswordResetController } from "../controllers/passwordReset.controller";
 import { protect } from "../middlewares/auth.middleware";
 import { uploadImage } from "../middlewares/uploads";
 
 const router = Router();
 const donorController = new DonorUserController();
+const passwordResetController = new PasswordResetController();
 
 
 // Register a new donor
@@ -13,7 +15,11 @@ router.post("/register", (req, res) => donorController.registerDonor(req, res));
 // Login donor
 router.post("/login", (req, res) => donorController.loginDonor(req, res));
 
-// Get all donors
+// Password Reset Routes
+router.post("/forgot-password", (req, res) => passwordResetController.forgotPassword(req, res));
+router.post("/verify-otp", (req, res) => passwordResetController.verifyOTP(req, res));
+router.post("/reset-password", (req, res) => passwordResetController.resetPassword(req, res));
+router.post("/resend-otp", (req, res) => passwordResetController.resendOTP(req, res));
 router.get("/", (req, res) => donorController.getAllDonors(req, res));
 
 // Get donor by ID
