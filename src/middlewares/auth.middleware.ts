@@ -3,10 +3,8 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import asyncHandler from "./async";
 import { DonorUserModel } from "../models/DonorUser.model";
 import { OrganizationUserModel } from "../models/OrganizationUser.model";
+import { UserModel } from "../models/user.model";
 import { JWT_SECRET } from "../config";
-
-// import Student from "../models/student_model";
-// import DonorUser from "../models/donoruser_model";
 
 /* ----------------------------------
    Extend Express Request type
@@ -31,6 +29,7 @@ interface DecodedToken extends JwtPayload {
 ----------------------------------- */
 const findUserById = async (id: string) => {
   return (
+    (await UserModel.findById(id)) ||
     (await DonorUserModel.findById(id)) ||
     (await OrganizationUserModel.findById(id))
   );
@@ -63,14 +62,21 @@ export const protect = asyncHandler(
 
       const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
 
+      console.log('🔐 [AUTH DEBUG] Decoded token ID:', decoded.id);
       const user = await findUserById(decoded.id);
 
       if (!user) {
+        console.log('🔐 [AUTH DEBUG] ❌ User not found for ID:', decoded.id);
         return res
           .status(401)
           .json({ message: "Not authorized to access this route" });
       }
 
+      console.log('🔐 [AUTH DEBUG] ✅ User found:', user._id);
+      console.log('🔐 [AUTH DEBUG] User email:', user.email);
+      console.log('🔐 [AUTH DEBUG] User role:', user.role);
+      console.log('🔐 [AUTH DEBUG] User object keys:', Object.keys(user.toObject ? user.toObject() : user));
+      
       req.user = user;
       next();
     } catch (error) {
@@ -87,10 +93,20 @@ export const protect = asyncHandler(
 export const authorize =
   (...roles: string[]) =>
   (req: Request, res: Response, next: NextFunction) => {
-    if (!roles.includes(req.user?.role)) {
+    // Get userType from the user object and convert to uppercase
+    const userRole = req.user?.userType?.toUpperCase();
+    
+    console.log('🛡️ [AUTHORIZE DEBUG] Required roles:', roles);
+    console.log('🛡️ [AUTHORIZE DEBUG] User userType:', req.user?.userType);
+    console.log('🛡️ [AUTHORIZE DEBUG] Converted role:', userRole);
+    
+    if (!userRole || !roles.includes(userRole)) {
+      console.log('🛡️ [AUTHORIZE DEBUG] ❌ Role check failed');
       return res.status(403).json({
-        message: `User role ${req.user?.role} is not authorized to access this route`,
+        message: `User role ${userRole} is not authorized to access this route`,
       });
     }
+    
+    console.log('🛡️ [AUTHORIZE DEBUG] ✅ Role check passed');
     next();
   };

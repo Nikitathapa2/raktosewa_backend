@@ -144,3 +144,41 @@ export const UpdateProfileDTO = z.object({
 });
 
 export type UpdateProfileDTO = z.infer<typeof UpdateProfileDTO>;
+/* ----------------------------------
+   Password Reset DTOs
+   For OTP-based password reset flow
+----------------------------------- */
+export const ForgotPasswordDTO = z.object({
+  email: z.string().email("Invalid email address"),
+  userType: z.enum(["donor", "organization"], { message: "Select either Donor or Organization" }),
+});
+
+export type ForgotPasswordDTO = z.infer<typeof ForgotPasswordDTO>;
+
+export const VerifyOTPDTO = z.object({
+  email: z.string().email("Invalid email address"),
+  otp: z.string().regex(/^\d{6}$/, "OTP must be 6 digits"),
+  userType: z.enum(["donor", "organization"]),
+});
+
+export type VerifyOTPDTO = z.infer<typeof VerifyOTPDTO>;
+
+export const ResetPasswordDTO = z.object({
+  email: z.string().email("Invalid email address"),
+  otp: z.string().regex(/^\d{6}$/, "OTP must be 6 digits"),
+  newPassword: z.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: z.string().min(6, "Confirm password is required"),
+  userType: z.enum(["donor", "organization"]),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
+
+export type ResetPasswordDTO = z.infer<typeof ResetPasswordDTO>;
+
+export const ResendOTPDTO = z.object({
+  email: z.string().email("Invalid email address"),
+  userType: z.enum(["donor", "organization"]),
+});
+
+export type ResendOTPDTO = z.infer<typeof ResendOTPDTO>;
