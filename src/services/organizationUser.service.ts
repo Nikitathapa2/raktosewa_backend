@@ -5,6 +5,9 @@ import { OrganizationUserRepository } from "../repositories/organizationUser.rep
 import { IOrganizationUser } from "../models/OrganizationUser.model";
 import { HttpError } from "../errors/http-error";
 import { JWT_SECRET } from "../config";
+import { BloodInventoryModel } from "../models/bloodInventory.model";
+import { CampaignModel } from "../models/campaign.model";
+import { DonorUserModel } from "../models/DonorUser.model";
 
 const organizationUserRepository = new OrganizationUserRepository();
 
@@ -41,11 +44,11 @@ export class OrganizationUserService {
       id: org._id,
       email:  org.email,
       organizationName: org.organizationName,
+      headOfOrganization: org.headOfOrganization,
       userType: org.userType,
       phoneNumber: org.phoneNumber,
       address: org.address,
       profilePicture: org.profilePicture,
-      headOfOrganization: org.headOfOrganization,
     }
     const payload = {
       id: org._id,
@@ -54,7 +57,7 @@ export class OrganizationUserService {
       userType: org.userType,
     };
 
-    const token = jwt.sign(payload, JWT_SECRET as string, { expiresIn: "1h" });
+    const token = jwt.sign(payload, JWT_SECRET as string, { expiresIn: "120h" });
     return { token, organization: sendOrg };
   }
 
@@ -84,5 +87,31 @@ export class OrganizationUserService {
     const updatedOrg = await organizationUserRepository.updateOrganization(id, { profilePicture: filename });
     if (!updatedOrg) throw new HttpError(404, "Organization not found");
     return updatedOrg;
+  }
+
+  // Get dashboard statistics for organization
+  async getDashboardStats(organizationId: string) {
+    try {
+      // 1. Get total blood units in stock
+      const inventoryItems = await BloodInventoryModel.find({ organization: organizationId });
+      const totalBloodUnits = inventoryItems.reduce((sum, item) => sum + item.quantity, 0);
+
+      // 2. Get total campaigns
+      const totalCampaigns = await CampaignModel.countDocuments({ organization: organizationId });
+
+      // 3. Get total donors in the system
+      const totalDonorsCount = await DonorUserModel.countDocuments({});
+
+      return {
+        success: true,
+        data: {
+          totalBloodUnits,
+          totalDonorsCount,
+          totalCampaigns,
+        },
+      };
+    } catch (error: any) {
+      throw new HttpError(500, `Failed to fetch dashboard stats: ${error.message}`);
+    }
   }
 }

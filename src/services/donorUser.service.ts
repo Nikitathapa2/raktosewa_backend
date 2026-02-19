@@ -57,7 +57,7 @@ export class DonorUserService {
       userType: donor.userType,
     };
 
-    const token = jwt.sign(payload, JWT_SECRET as string, { expiresIn: "1h" });
+    const token = jwt.sign(payload, JWT_SECRET as string, { expiresIn: "120h" });
     return { token, sendDonor };
   }
 
