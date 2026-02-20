@@ -2,10 +2,84 @@ import { AdminCreateUserDTO, UpdateUserDTO, UpdateProfileDTO } from "../../dtos/
 import { Request, Response, NextFunction } from "express";
 import z from "zod";
 import { AdminUserService } from "../../services/admin/user.service";
+import { parsePaginationParams } from "../../utils/pagination";
 
 let adminUserService = new AdminUserService();
 
 export class AdminUserController {
+  async getAdminProfile(req: Request, res: Response, next: NextFunction) {
+    try {
+      const adminId = req.user?._id?.toString();
+
+      if (!adminId) {
+        return res.status(401).json({
+          success: false,
+          message: "Unauthorized",
+        });
+      }
+
+      const data = await adminUserService.getAdminProfile(adminId);
+
+      return res.status(200).json({
+        success: true,
+        message: "Admin profile retrieved successfully",
+        data,
+      });
+    } catch (error: Error | any) {
+      return res.status(error.statusCode ?? 500).json({
+        success: false,
+        message: error.message || "Error retrieving admin profile",
+      });
+    }
+  }
+
+  async changeAdminPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const adminId = req.user?._id?.toString();
+      const { currentPassword, newPassword, confirmPassword } = req.body;
+
+      if (!adminId) {
+        return res.status(401).json({
+          success: false,
+          message: "Unauthorized",
+        });
+      }
+
+      if (!currentPassword || !newPassword || !confirmPassword) {
+        return res.status(400).json({
+          success: false,
+          message: "Current password, new password and confirm password are required",
+        });
+      }
+
+      if (newPassword.length < 6) {
+        return res.status(400).json({
+          success: false,
+          message: "New password must be at least 6 characters",
+        });
+      }
+
+      if (newPassword !== confirmPassword) {
+        return res.status(400).json({
+          success: false,
+          message: "New password and confirm password do not match",
+        });
+      }
+
+      await adminUserService.changeAdminPassword(adminId, currentPassword, newPassword);
+
+      return res.status(200).json({
+        success: true,
+        message: "Password updated successfully",
+      });
+    } catch (error: Error | any) {
+      return res.status(error.statusCode ?? 500).json({
+        success: false,
+        message: error.message || "Error changing password",
+      });
+    }
+  }
+
   /* ----------------------------------
      Create User (Admin Only)
      POST /api/admin/users
@@ -78,17 +152,25 @@ export class AdminUserController {
 
   /* ----------------------------------
      Get All Users (Admin Only)
-     GET /api/admin/users
+     GET /api/admin/users?page=1&limit=10
   ----------------------------------- */
   async getAllUsers(req: Request, res: Response, next: NextFunction) {
     try {
-      const users = await adminUserService.getAllUsers();
+      // Extract pagination parameters
+      const pageParam = Array.isArray(req.query.page) ? req.query.page[0] : req.query.page;
+      const limitParam = Array.isArray(req.query.limit) ? req.query.limit[0] : req.query.limit;
+      const { page, limit } = parsePaginationParams(
+        typeof pageParam === 'string' ? pageParam : undefined,
+        typeof limitParam === 'string' ? limitParam : undefined
+      );
+      
+      const result = await adminUserService.getAllUsersPaginated(page, limit);
 
       return res.status(200).json({
         success: true,
-        data: users,
+        data: result.data,
+        pagination: result.pagination,
         message: "All users retrieved successfully",
-        count: users.length,
       });
     } catch (error: Error | any) {
       return res.status(error.statusCode ?? 500).json({
@@ -104,7 +186,7 @@ export class AdminUserController {
   ----------------------------------- */
   async getUserById(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.params.id;
+      const userId = req.params.id as string;
 
       if (!userId) {
         return res.status(400).json({
@@ -134,7 +216,7 @@ export class AdminUserController {
   ----------------------------------- */
   async updateUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.params.id;
+      const userId = req.params.id as string;
 
       if (!userId) {
         return res.status(400).json({
@@ -178,7 +260,7 @@ export class AdminUserController {
   ----------------------------------- */
   async deleteUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.params.id;
+      const userId = req.params.id as string;
 
       if (!userId) {
         return res.status(400).json({
@@ -215,7 +297,7 @@ export class AdminUserController {
   ----------------------------------- */
   async updateOwnProfile(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.params.id;
+      const userId = req.params.id as string;
 
       // Verify user is updating their own profile
       if (req.user?.id !== userId) {
