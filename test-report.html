@@ -1,0 +1,277 @@
+<html><head><meta charset="utf-8"/><title>Raktosewa – Integration Test Report</title><style type="text/css">:root {
+  --text-primary: #111;
+  --text-secondary: #4f4f4f;
+  --success: #006633;
+  --success-bright: #80ffbf;
+  --danger: #cc071e;
+  --danger-bright: #fbdfe0;
+  --warning: #995c00;
+  --warning-bright: #ffeea8;
+  --panel: #eee;
+  --border: #949494;
+  --disabled: #6b6b6b;
+}
+
+html,
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
+  color: var(--text-primary);
+}
+body {
+  padding: 2rem 1rem;
+}
+.jesthtml-content {
+  margin: 0 auto;
+  max-width: 70rem;
+}
+header {
+  display: flex;
+  align-items: center;
+}
+#title {
+  margin: 0;
+  flex-grow: 1;
+}
+#logo {
+  height: 4rem;
+}
+#timestamp {
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+#metadata-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.additional-information-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+}
+
+/** SUMMARY */
+#summary {
+  color: var(--text-primary);
+  display: flex;
+  font-family: monospace;
+  font-size: 1rem;
+}
+#summary > div {
+  margin-right: 0.5rem;
+  background: var(--panel);
+  padding: 1rem;
+  min-width: 15rem;
+}
+#summary > div:last-child {
+  margin-right: 0;
+}
+@media only screen and (max-width: 720px) {
+  #summary {
+    flex-direction: column;
+  }
+  #summary > div {
+    margin-right: 0;
+    margin-top: 1rem;
+  }
+  #summary > div:first-child {
+    margin-top: 0;
+  }
+}
+
+.summary-total {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+.summary-passed {
+  color: var(--success);
+  border-left: 0.4rem solid var(--success);
+  padding-left: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+.summary-failed,
+.summary-obsolete-snapshots {
+  color: var(--danger);
+  border-left: 0.4rem solid var(--danger);
+  padding-left: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+.summary-pending {
+  color: var(--warning);
+  border-left: 0.4rem solid var(--warning);
+  padding-left: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+.summary-empty {
+  color: var(--disabled);
+  border-left: 0.4rem solid var(--disabled);
+  margin-bottom: 0.15rem;
+}
+
+.test-result {
+  padding: 1rem;
+  margin-bottom: 0.25rem;
+}
+.test-result:last-child {
+  border: 0;
+}
+.test-result.passed {
+  background-color: var(--success-bright);
+  color: var(--success);
+}
+.test-result.failed {
+  background-color: var(--danger-bright);
+  color: var(--danger);
+}
+.test-result.pending {
+  background-color: var(--warning-bright);
+  color: var(--warning);
+}
+
+.test-info {
+  display: flex;
+  justify-content: space-between;
+}
+.test-suitename {
+  width: 20%;
+  text-align: left;
+  font-weight: bold;
+  word-break: break-word;
+}
+.test-title {
+  width: 40%;
+  text-align: left;
+  font-style: italic;
+}
+.test-status {
+  width: 20%;
+  text-align: right;
+}
+.test-duration {
+  width: 10%;
+  text-align: right;
+  font-size: 0.85rem;
+}
+
+.failureMessages {
+  padding: 0 1rem;
+  margin-top: 1rem;
+  border-top: 1px dashed var(--danger);
+}
+.failureMessages.suiteFailure {
+  border-top: none;
+}
+.failureMsg {
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+
+.suite-container {
+  margin-bottom: 1rem;
+}
+.suite-info {
+  padding: 1rem;
+  background-color: var(--panel);
+  color: var(--text-secondary);
+  border: 0.15rem solid;
+  border-color: var(--panel);
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+.suite-info:hover {
+  border-color: var(--border);
+  cursor: pointer;
+}
+.suite-info .suite-path {
+  word-break: break-all;
+  flex-grow: 1;
+  font-family: monospace;
+  font-size: 1rem;
+}
+.suite-info .suite-time {
+  margin-left: 1rem;
+  padding: 0.2rem 0.3rem;
+  font-size: 0.85rem;
+}
+.suite-info .suite-time.warn {
+  background-color: var(--danger);
+  color: #fff;
+}
+.suite-info:before {
+  content: "\2303";
+  display: inline-block;
+  margin-right: 1rem;
+  transform: rotate(180deg) translateY(0.15rem);
+}
+.suite-container[open] .suite-info:before {
+  transform: rotate(0deg) translateY(0.15rem);
+}
+
+/* CONSOLE LOGS */
+.suite-consolelog {
+  margin-bottom: 0.25rem;
+  padding: 1rem;
+  background-color: var(--panel);
+}
+.suite-consolelog-header {
+  font-weight: bold;
+}
+.suite-consolelog-item {
+  padding: 0.5rem;
+}
+.suite-consolelog-item pre {
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+.suite-consolelog-item-origin {
+  color: var(--text-secondary);
+  font-weight: bold;
+}
+.suite-consolelog-item-message {
+  color: var(--text-primary);
+  font-size: 1rem;
+  padding: 0 0.5rem;
+}
+
+/* OBSOLETE SNAPSHOTS */
+.suite-obsolete-snapshots {
+  margin-bottom: 0.25rem;
+  padding: 1rem;
+  background-color: var(--danger-bright);
+  color: var(--danger);
+}
+.suite-obsolete-snapshots-header {
+  font-weight: bold;
+}
+.suite-obsolete-snapshots-item {
+  padding: 0.5rem;
+}
+.suite-obsolete-snapshots-item pre {
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+.suite-obsolete-snapshots-item-message {
+  color: var(--text-primary);
+  font-size: 1rem;
+  padding: 0 0.5rem;
+}
+</style></head><body><main class="jesthtml-content"><header><h1 id="title">Raktosewa – Integration Test Report</h1></header><section id="metadata-container"><div id="timestamp">Started: 2026-03-05 12:32:20</div><div id="summary"><div id="suite-summary"><div class="summary-total">Suites (6)</div><div class="summary-passed ">6 passed</div><div class="summary-failed  summary-empty">0 failed</div><div class="summary-pending  summary-empty">0 pending</div></div><div id="test-summary"><div class="summary-total">Tests (80)</div><div class="summary-passed ">80 passed</div><div class="summary-failed  summary-empty">0 failed</div><div class="summary-pending  summary-empty">0 pending</div></div></div></section><details id="suite-1" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\Developer\nikita-ko_backend\Nikita\raktosewa_backend\src\__tests__\integration\auth.test.ts</div><div class="suite-time">3.105s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 1. Admin Registration - POST /api/v1/admin/register</div><div class="test-title">should register new admin successfully with valid credentials (201)</div><div class="test-status">passed</div><div class="test-duration">0.141s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 1. Admin Registration - POST /api/v1/admin/register</div><div class="test-title">should fail to register admin with duplicate email (409)</div><div class="test-status">passed</div><div class="test-duration">0.014s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 1. Admin Registration - POST /api/v1/admin/register</div><div class="test-title">should fail admin registration with missing email (400)</div><div class="test-status">passed</div><div class="test-duration">0.008s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 1. Admin Registration - POST /api/v1/admin/register</div><div class="test-title">should fail admin registration with missing password (400)</div><div class="test-status">passed</div><div class="test-duration">0.009s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 2. Admin Login - POST /api/v1/admin/login</div><div class="test-title">should login admin successfully with valid credentials (200)</div><div class="test-status">passed</div><div class="test-duration">0.073s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 2. Admin Login - POST /api/v1/admin/login</div><div class="test-title">should fail login with wrong password (401)</div><div class="test-status">passed</div><div class="test-duration">0.074s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 2. Admin Login - POST /api/v1/admin/login</div><div class="test-title">should fail login with non-existent email (401)</div><div class="test-status">passed</div><div class="test-duration">0.02s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 2. Admin Login - POST /api/v1/admin/login</div><div class="test-title">should fail login with missing email (400)</div><div class="test-status">passed</div><div class="test-duration">0.01s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 2. Admin Login - POST /api/v1/admin/login</div><div class="test-title">should fail login with missing password (400)</div><div class="test-status">passed</div><div class="test-duration">0.012s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 3. Create User - POST /api/v1/admin/users</div><div class="test-title">should create new donor user successfully (201)</div><div class="test-status">passed</div><div class="test-duration">0.132s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 3. Create User - POST /api/v1/admin/users</div><div class="test-title">should create new organization user successfully (201)</div><div class="test-status">passed</div><div class="test-duration">0.101s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 3. Create User - POST /api/v1/admin/users</div><div class="test-title">should fail create user without authentication (401/403)</div><div class="test-status">passed</div><div class="test-duration">0.011s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 3. Create User - POST /api/v1/admin/users</div><div class="test-title">should fail create user with duplicate email (409)</div><div class="test-status">passed</div><div class="test-duration">0.048s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 3. Create User - POST /api/v1/admin/users</div><div class="test-title">should fail create user with missing required fields (400)</div><div class="test-status">passed</div><div class="test-duration">0.032s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 3. Create User - POST /api/v1/admin/users</div><div class="test-title">should fail create user with invalid blood group (400)</div><div class="test-status">passed</div><div class="test-duration">0.03s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 3. Create User - POST /api/v1/admin/users</div><div class="test-title">should fail create user with password too short (400)</div><div class="test-status">passed</div><div class="test-duration">0.028s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 4. Get All Users - GET /api/v1/admin/users</div><div class="test-title">should retrieve all users successfully (200)</div><div class="test-status">passed</div><div class="test-duration">0.043s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 4. Get All Users - GET /api/v1/admin/users</div><div class="test-title">should fail to get users without authentication (401/403)</div><div class="test-status">passed</div><div class="test-duration">0.009s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 5. Get User by ID - GET /api/v1/admin/users/:id</div><div class="test-title">should retrieve user by ID successfully (200)</div><div class="test-status">passed</div><div class="test-duration">0.018s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 5. Get User by ID - GET /api/v1/admin/users/:id</div><div class="test-title">should fail to get user with invalid ID (404/500)</div><div class="test-status">passed</div><div class="test-duration">0.019s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 5. Get User by ID - GET /api/v1/admin/users/:id</div><div class="test-title">should fail to get user without authentication (401/403)</div><div class="test-status">passed</div><div class="test-duration">0.009s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 6. Update User - PUT /api/v1/admin/users/:id</div><div class="test-title">should update user successfully with valid data (200)</div><div class="test-status">passed</div><div class="test-duration">0.028s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 6. Update User - PUT /api/v1/admin/users/:id</div><div class="test-title">should fail update user without authentication (401/403)</div><div class="test-status">passed</div><div class="test-duration">0.013s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 6. Update User - PUT /api/v1/admin/users/:id</div><div class="test-title">should fail update user with invalid email format (400)</div><div class="test-status">passed</div><div class="test-duration">0.024s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 6. Update User - PUT /api/v1/admin/users/:id</div><div class="test-title">should fail update user with non-existent ID (404/500)</div><div class="test-status">passed</div><div class="test-duration">0.025s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 7. Delete User - DELETE /api/v1/admin/users/:id</div><div class="test-title">should delete user successfully (200)</div><div class="test-status">passed</div><div class="test-duration">0.033s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; 7. Delete User - DELETE /api/v1/admin/users/:id</div><div class="test-title">should fail delete user without authentication (401/403)</div><div class="test-status">passed</div><div class="test-duration">0.01s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">Admin Integration Tests - Complete Suite (25 Tests) &gt; Summary: Routes &amp; Status Codes</div><div class="test-title">displays all admin routes and their status codes</div><div class="test-status">passed</div><div class="test-duration">0.006s</div></div></div></div></details><details id="suite-2" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\Developer\nikita-ko_backend\Nikita\raktosewa_backend\src\__tests__\unit\services\organizationUser.service.test.ts</div><div class="suite-time">0.454s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Service Unit test &gt; registerOrganization</div><div class="test-title">should register a new organization successfully</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Service Unit test &gt; registerOrganization</div><div class="test-title">should throw error if email already exists</div><div class="test-status">passed</div><div class="test-duration">0.015s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Service Unit test &gt; loginOrganization</div><div class="test-title">should login organization successfully with valid credentials</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Service Unit test &gt; loginOrganization</div><div class="test-title">should throw error if organization not found</div><div class="test-status">passed</div><div class="test-duration">0.005s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Service Unit test &gt; loginOrganization</div><div class="test-title">should throw error if password is invalid</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Service Unit test &gt; getAllOrganizations</div><div class="test-title">should return all organizations</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Service Unit test &gt; getOrganizationById</div><div class="test-title">should return organization by id</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Service Unit test &gt; getOrganizationById</div><div class="test-title">should throw error if organization not found</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Service Unit test &gt; updateOrganization</div><div class="test-title">should update organization without password</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Service Unit test &gt; updateOrganization</div><div class="test-title">should hash password when updating organization password</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Service Unit test &gt; updateOrganization</div><div class="test-title">should throw error if organization not found during update</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Service Unit test &gt; updateOrganizationProfilePicture</div><div class="test-title">should update organization profile picture</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Service Unit test &gt; updateOrganizationProfilePicture</div><div class="test-title">should throw error if organization not found when updating profile picture</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Service Unit test &gt; getDashboardStats</div><div class="test-title">should return dashboard statistics successfully</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Service Unit test &gt; getDashboardStats</div><div class="test-title">should handle error when fetching dashboard stats</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Service Unit test &gt; getDashboardStats</div><div class="test-title">should return zero stats when no data exists</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div></div></details><details id="suite-3" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\Developer\nikita-ko_backend\Nikita\raktosewa_backend\src\__tests__\unit\repositories\donorUser.test.ts</div><div class="suite-time">0.135s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">DonorUser Repository Unit test</div><div class="test-title">should create a new donor</div><div class="test-status">passed</div><div class="test-duration">0.003s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DonorUser Repository Unit test</div><div class="test-title">should get donor by email</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DonorUser Repository Unit test</div><div class="test-title">should get donor by id</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DonorUser Repository Unit test</div><div class="test-title">should get all donors</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DonorUser Repository Unit test</div><div class="test-title">should get paginated donors</div><div class="test-status">passed</div><div class="test-duration">0.006s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DonorUser Repository Unit test</div><div class="test-title">should update donor</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DonorUser Repository Unit test</div><div class="test-title">should delete donor and return true when donor exists</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DonorUser Repository Unit test</div><div class="test-title">should delete donor and return false when donor does not exist</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div></div></details><details id="suite-4" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\Developer\nikita-ko_backend\Nikita\raktosewa_backend\src\__tests__\unit\repositories\organizationUser.test.ts</div><div class="suite-time">0.156s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Repository Unit test</div><div class="test-title">should create a new organization</div><div class="test-status">passed</div><div class="test-duration">0.003s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Repository Unit test</div><div class="test-title">should get organization by email</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Repository Unit test</div><div class="test-title">should get organization by id</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Repository Unit test</div><div class="test-title">should get all organizations</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Repository Unit test</div><div class="test-title">should get paginated organizations</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Repository Unit test</div><div class="test-title">should update organization</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Repository Unit test</div><div class="test-title">should delete organization and return true when organization exists</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Repository Unit test</div><div class="test-title">should delete organization and return false when organization does not exist</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">OrganizationUser Repository Unit test</div><div class="test-title">should return null when getting non-existent organization</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div></div></details><details id="suite-5" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\Developer\nikita-ko_backend\Nikita\raktosewa_backend\src\__tests__\unit\repositories\adminUser.test.ts</div><div class="suite-time">0.108s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">AdminUser Repository Unit test</div><div class="test-title">should create a new admin</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">AdminUser Repository Unit test</div><div class="test-title">should get admin by email</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">AdminUser Repository Unit test</div><div class="test-title">should get admin by id</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">AdminUser Repository Unit test</div><div class="test-title">should update admin by id</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">AdminUser Repository Unit test</div><div class="test-title">should return null when getting non-existent admin</div><div class="test-status">passed</div><div class="test-duration">0.004s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">AdminUser Repository Unit test</div><div class="test-title">should return null when updating non-existent admin</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div></div></details><details id="suite-6" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\Developer\nikita-ko_backend\Nikita\raktosewa_backend\src\__tests__\unit\services\donorUser.service.test.ts</div><div class="suite-time">0.139s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">DonorUser Service Unit test &gt; registerDonor</div><div class="test-title">should register a new donor successfully</div><div class="test-status">passed</div><div class="test-duration">0.003s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DonorUser Service Unit test &gt; registerDonor</div><div class="test-title">should throw error if email already exists</div><div class="test-status">passed</div><div class="test-duration">0.009s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DonorUser Service Unit test &gt; loginDonor</div><div class="test-title">should login donor successfully with valid credentials</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DonorUser Service Unit test &gt; loginDonor</div><div class="test-title">should throw error if donor not found</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DonorUser Service Unit test &gt; loginDonor</div><div class="test-title">should throw error if password is invalid</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DonorUser Service Unit test &gt; getAllDonors</div><div class="test-title">should return all donors</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DonorUser Service Unit test &gt; getDonorById</div><div class="test-title">should return donor by id</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DonorUser Service Unit test &gt; getDonorById</div><div class="test-title">should throw error if donor not found</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DonorUser Service Unit test &gt; updateDonor</div><div class="test-title">should update donor without password</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DonorUser Service Unit test &gt; updateDonor</div><div class="test-title">should hash password when updating donor password</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DonorUser Service Unit test &gt; updateDonor</div><div class="test-title">should throw error if donor not found during update</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DonorUser Service Unit test &gt; updateDonorProfilePicture</div><div class="test-title">should update donor profile picture</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">DonorUser Service Unit test &gt; updateDonorProfilePicture</div><div class="test-title">should throw error if donor not found when updating profile picture</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div></div></details></main></body></html>

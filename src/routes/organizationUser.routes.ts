@@ -25,6 +25,9 @@ router.get("/", (req, res) => orgController.getAllOrganizations(req, res));
 // Get organization by ID
 router.get("/:id", (req, res) => orgController.getOrganizationById(req, res));
 
+// Get organization dashboard statistics
+router.get("/dashboard/stats", protect, (req, res) => orgController.getDashboardStats(req, res));
+
 // Update organization by ID
 router.put("/:id", (req, res) => orgController.updateOrganization(req, res));
 

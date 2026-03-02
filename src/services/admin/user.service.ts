@@ -10,6 +10,40 @@ const organizationRepository = new OrganizationUserRepository();
 const adminRepository = new AdminUserRepository();
 
 export class AdminUserService {
+  async getAdminProfile(adminId: string) {
+    const admin = await adminRepository.getAdminById(adminId);
+
+    if (!admin) {
+      throw new HttpError(404, "Admin not found");
+    }
+
+    return {
+      _id: admin._id,
+      email: admin.email,
+      role: admin.role,
+      createdAt: admin.createdAt,
+      updatedAt: admin.updatedAt,
+    };
+  }
+
+  async changeAdminPassword(adminId: string, currentPassword: string, newPassword: string) {
+    const admin = await adminRepository.getAdminById(adminId);
+
+    if (!admin) {
+      throw new HttpError(404, "Admin not found");
+    }
+
+    const isMatch = await bcryptjs.compare(currentPassword, admin.password);
+    if (!isMatch) {
+      throw new HttpError(400, "Current password is incorrect");
+    }
+
+    const hashedPassword = await bcryptjs.hash(newPassword, 10);
+    await adminRepository.updateAdminById(adminId, { password: hashedPassword });
+
+    return { success: true };
+  }
+
   /* ----------------------------------
      Create User (Donor or Organization)
   ----------------------------------- */
@@ -22,7 +56,7 @@ export class AdminUserService {
     const orgExists = await organizationRepository.getOrganizationByEmail(email);
 
     if (donorExists || orgExists) {
-      throw new HttpError(403, "Email already in use");
+      throw new HttpError(409, "Email already in use");
     }
 
     // Hash password
@@ -55,20 +89,20 @@ export class AdminUserService {
   /* ----------------------------------
      Create Admin User
   ----------------------------------- */
-  async createAdminUser(email: string, password: string) {
-    // Check if admin already exists
-    const existing = await adminRepository.getAdminByEmail(email);
-    if (existing) {
-      throw new HttpError(403, "Admin email already in use");
+    async createAdminUser(email: string, password: string) {
+      // Check if admin already exists
+      const existing = await adminRepository.getAdminByEmail(email);
+      if (existing) {
+        throw new HttpError(409, "Admin email already in use");
+      }
+      const hashedPassword = await bcryptjs.hash(password, 10);
+      const newAdmin = await adminRepository.createAdmin({
+        email,
+        password: hashedPassword,
+        role: "admin",
+      });
+      return newAdmin;
     }
-    const hashedPassword = await bcryptjs.hash(password, 10);
-    const newAdmin = await adminRepository.createAdmin({
-      email,
-      password: hashedPassword,
-      role: "admin",
-    });
-    return newAdmin;
-  }
 
   /* ----------------------------------
      Authenticate Admin (Login)
@@ -101,6 +135,50 @@ export class AdminUserService {
       });
 
       return allUsers;
+    } catch (error: any) {
+      throw new HttpError(
+        error.statusCode || 500,
+        error.message || "Error retrieving users"
+      );
+    }
+  }
+
+  /* ----------------------------------
+     Get Paginated Users (Both Donors and Organizations)
+  ----------------------------------- */
+  async getAllUsersPaginated(page: number = 1, limit: number = 10) {
+    try {
+      // Get paginated donors and organizations
+      const donorsResult = await donorRepository.getAllDonorsPaginated(
+        (page - 1) * limit,
+        limit
+      );
+      const orgsResult = await organizationRepository.getAllOrganizationsPaginated(
+        (page - 1) * limit,
+        limit
+      );
+
+      // Combine results
+      const allUsers = [...donorsResult.data, ...orgsResult.data].sort((a: any, b: any) => {
+        const dateA = new Date(a.createdAt || 0).getTime();
+        const dateB = new Date(b.createdAt || 0).getTime();
+        return dateB - dateA;
+      });
+
+      const totalItems = donorsResult.total + orgsResult.total;
+      const totalPages = Math.ceil(totalItems / limit);
+
+      return {
+        data: allUsers,
+        pagination: {
+          currentPage: page,
+          pageSize: limit,
+          totalItems,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        },
+      };
     } catch (error: any) {
       throw new HttpError(
         error.statusCode || 500,

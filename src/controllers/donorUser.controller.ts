@@ -24,12 +24,13 @@ export class DonorUserController {
         message: "Donor registered successfully",
         data: newDonor,
       });
-    } catch (error: any) {
-      return res.status(500).json({
-        success: false,
-        message: error.message || "Internal server error",
-      });
-    }
+    }catch (error: any) {
+  return res.status(error.statusCode || 500).json({
+    success: false,
+    message: error.message || "Internal server error",
+  });
+}
+
   }
 
   // Login donor
@@ -72,9 +73,10 @@ export class DonorUserController {
   }
 
   // Get donor by ID
+  // Get donor by ID
   async getDonorById(req: Request, res: Response) {
     try {
-      const donor = await donorUserService.getDonorById(req.params.id);
+      const donor = await donorUserService.getDonorById(req.params.id as string);
       return res.status(200).json({
         success: true,
         data: donor,
@@ -90,7 +92,7 @@ export class DonorUserController {
   // Update donor
   async updateDonor(req: Request, res: Response) {
     try {
-      const updatedDonor = await donorUserService.updateDonor(req.params.id, req.body);
+      const updatedDonor = await donorUserService.updateDonor(req.params.id as string, req.body);
       return res.status(200).json({
         success: true,
         message: "Donor updated successfully",
@@ -117,14 +119,7 @@ export class DonorUserController {
       }
 
       const updatedDonor = await donorUserService.updateDonorProfilePicture(req.user._id.toString(), file.filename);
-      return res.status(200).json({ 
-        success: true, 
-        message: "Profile picture updated", 
-        data: {
-          profilePicture: updatedDonor.profilePicture,
-          user: updatedDonor
-        }
-      });
+      return res.status(200).json({ success: true, message: "Profile picture updated", data: updatedDonor });
     } catch (error: any) {
       return res.status(error.statusCode || 500).json({ success: false, message: error.message || "Internal server error" });
     }

@@ -5,6 +5,7 @@ export interface IDonorUserRepository {
   getDonorByEmail(email: string): Promise<IDonorUser | null>;
   getDonorById(id: string): Promise<IDonorUser | null>;
   getAllDonors(): Promise<IDonorUser[]>;
+  getAllDonorsPaginated(skip: number, limit: number): Promise<{ data: IDonorUser[]; total: number }>;
   updateDonor(id: string, updateData: Partial<IDonorUser>): Promise<IDonorUser | null>;
   deleteDonor(id: string): Promise<boolean>;
 }
@@ -26,6 +27,12 @@ export class DonorUserRepository implements IDonorUserRepository {
 
   async getAllDonors(): Promise<IDonorUser[]> {
     return await DonorUserModel.find();
+  }
+
+  async getAllDonorsPaginated(skip: number, limit: number): Promise<{ data: IDonorUser[]; total: number }> {
+    const data = await DonorUserModel.find().skip(skip).limit(limit).sort({ createdAt: -1 });
+    const total = await DonorUserModel.countDocuments();
+    return { data, total };
   }
 
   async updateDonor(id: string, updateData: Partial<IDonorUser>): Promise<IDonorUser | null> {

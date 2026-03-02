@@ -264,8 +264,8 @@ describe('Admin Integration Tests - Complete Suite (25 Tests)', () => {
             expect(response.body.success).toBe(true);
             expect(response.body.message).toBe("All users retrieved successfully");
             expect(Array.isArray(response.body.data)).toBe(true);
-            expect(response.body).toHaveProperty("count");
-            expect(response.body.count).toBeGreaterThanOrEqual(2);
+            expect(response.body.pagination).toHaveProperty("totalItems");
+            expect(response.body.pagination.totalItems).toBeGreaterThanOrEqual(2);
         });
 
         it("should fail to get users without authentication (401/403)", async () => {

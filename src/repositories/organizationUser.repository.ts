@@ -5,6 +5,7 @@ export interface IOrganizationUserRepository {
   getOrganizationByEmail(email: string): Promise<IOrganizationUser | null>;
   getOrganizationById(id: string): Promise<IOrganizationUser | null>;
   getAllOrganizations(): Promise<IOrganizationUser[]>;
+  getAllOrganizationsPaginated(skip: number, limit: number): Promise<{ data: IOrganizationUser[]; total: number }>;
   updateOrganization(id: string, updateData: Partial<IOrganizationUser>): Promise<IOrganizationUser | null>;
   deleteOrganization(id: string): Promise<boolean>;
 }
@@ -26,6 +27,12 @@ export class OrganizationUserRepository implements IOrganizationUserRepository {
 
   async getAllOrganizations(): Promise<IOrganizationUser[]> {
     return await OrganizationUserModel.find();
+  }
+
+  async getAllOrganizationsPaginated(skip: number, limit: number): Promise<{ data: IOrganizationUser[]; total: number }> {
+    const data = await OrganizationUserModel.find().skip(skip).limit(limit).sort({ createdAt: -1 });
+    const total = await OrganizationUserModel.countDocuments();
+    return { data, total };
   }
 
   async updateOrganization(id: string, updateData: Partial<IOrganizationUser>): Promise<IOrganizationUser | null> {

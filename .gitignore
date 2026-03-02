@@ -38,5 +38,4 @@ coverage/
 # Optional: generated files from testing tools
 jest.config.js
 
-public/
-.agent/
+public/*/*

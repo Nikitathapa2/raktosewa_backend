@@ -72,9 +72,10 @@ export class OrganizationUserController {
   }
 
   // Get organization by ID
+  // Get organization by ID
   async getOrganizationById(req: Request, res: Response) {
     try {
-      const org = await organizationUserService.getOrganizationById(req.params.id);
+      const org = await organizationUserService.getOrganizationById(req.params.id as string);
       return res.status(200).json({
         success: true,
         data: org,
@@ -90,7 +91,7 @@ export class OrganizationUserController {
   // Update organization
   async updateOrganization(req: Request, res: Response) {
     try {
-      const updatedOrg = await organizationUserService.updateOrganization(req.params.id, req.body);
+      const updatedOrg = await organizationUserService.updateOrganization(req.params.id as string, req.body);
       return res.status(200).json({
         success: true,
         message: "Organization updated successfully",
@@ -117,16 +118,26 @@ export class OrganizationUserController {
       }
 
       const updatedOrg = await organizationUserService.updateOrganizationProfilePicture(req.user._id.toString(), file.filename);
-      return res.status(200).json({ 
-        success: true, 
-        message: "Profile picture updated", 
-        data: {
-          profilePicture: updatedOrg.profilePicture,
-          organization: updatedOrg
-        }
-      });
+      return res.status(200).json({ success: true, message: "Profile picture updated", data: updatedOrg });
     } catch (error: any) {
       return res.status(error.statusCode || 500).json({ success: false, message: error.message || "Internal server error" });
+    }
+  }
+
+  // Get organization dashboard statistics
+  async getDashboardStats(req: Request, res: Response) {
+    try {
+      if (!req.user || !req.user._id) {
+        return res.status(401).json({ success: false, message: "Unauthorized" });
+      }
+
+      const stats = await organizationUserService.getDashboardStats(req.user._id.toString());
+      return res.status(200).json(stats);
+    } catch (error: any) {
+      return res.status(error.statusCode || 500).json({
+        success: false,
+        message: error.message || "Internal server error",
+      });
     }
   }
 }
